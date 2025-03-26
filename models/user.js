@@ -40,19 +40,19 @@ User.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM('super_admin', 'admin', 'user'),
+      type: DataTypes.ENUM('admin', 'user'),
       allowNull: false,
       defaultValue: 'user',
     },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      field: 'createdAt',  // Ensure Sequelize maps this correctly
+      field: 'createdAt', 
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      field: 'updatedAt',  // Ensure Sequelize maps this correctly
+      field: 'updatedAt', 
     },
   },
   {
