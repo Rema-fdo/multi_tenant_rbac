@@ -1,9 +1,10 @@
 const express = require("express");
 const tenantServices = require("../services/tenant.services");
+const authenticate = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-router.post("/tenant", async (req, res) => {
+router.post("/tenant",authenticate, async (req, res) => {
   try {
     const { name } = req.body;
     const tenant = await tenantServices.createTenant(name)
