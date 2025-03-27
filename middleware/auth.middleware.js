@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const tenantRepository = require("../repositories/tenant.repositories");
+const authHelpers = require("../helpers/auth.helpers");
 
 module.exports = async (req, res, next) => {
     const token = req.header("Authorization");
@@ -15,16 +16,13 @@ module.exports = async (req, res, next) => {
         }
 
         const tenant = await tenantRepository.find(decodedPayload.tenant_id);
-        if (!tenant) {
-            return res.status(401).json({ message: "Tenant not found" });
-        }
-
-        const decoded = jwt.verify(tokenWithoutBearer, tenant.signing_secret);
-        req.user = decoded; 
+        
+        const decodedToken = await authHelpers.decodeToken(tokenWithoutBearer, tenant.signing_secret);
+        req.user = decodedToken;
 
         next();
     } catch (error) {
-        return res.status(401).json({ message: "Unauthorized: Invalid token" });
+        return res.status(401).json({ message: "Unauthorized: " + error.message });
     }
     
 };
