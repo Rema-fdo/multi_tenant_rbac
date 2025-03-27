@@ -4,7 +4,7 @@ const authenticate = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-router.post("/user", async (req, res) => {
+router.post("/user",authenticate, async (req, res) => {
     try {
         const { name, email, password, tenant_id, role } = req.body;
         const response = await userServices.createUser(name, email, password, tenant_id, role)
@@ -15,7 +15,7 @@ router.post("/user", async (req, res) => {
     res.status(400).json({ error: error.message });  }
 });
 
-router.get("/users", async (req, res) => {
+router.get("/users", authenticate, async (req, res) => {
     try {
         const { tenant_id } = req.query;
         const response = await userServices.getUsers(tenant_id)
@@ -37,7 +37,7 @@ router.get("/users", async (req, res) => {
       }
     });
 
-    router.get("/profile/:id", async (req, res) => {
+    router.get("/profile/:id", authenticate, async (req, res) => {
       try {
         const { id } = req.params;
         const user = await userServices.getUserById(id)
