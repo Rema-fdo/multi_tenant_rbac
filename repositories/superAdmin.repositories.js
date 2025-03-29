@@ -9,3 +9,7 @@ exports.createAdmin = async (name, email, password) => {
 exports.getAdminByEmail = async (email) => {
     return await SuperAdmin.findOne({ where: { email } });
 }
+
+exports.getAdminbyId = async (id) => {
+    return await SuperAdmin.findOne({ where: { id } });
+}
