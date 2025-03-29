@@ -1,10 +1,67 @@
 const express = require("express");
 const userServices = require("../services/user.services");
 const superAdminServices = require("../services/superAdmin.services");
-const authenticate = require("../middleware/auth.middleware");
+const authenticate = require("../middleware/authentication.middleware");
 const authHelpers = require("../helpers/auth.helpers");
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *
+ * security:
+ *   - BearerAuth: []
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Authentication
+ *   description: User and Super Admin authentication APIs
+ */
+
+/**
+ * @swagger
+ * /users/login:
+ *   post:
+ *     summary: User login
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "SecurePassword123"
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *                 refreshToken:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *       400:
+ *         description: Invalid credentials
+ */
 
 router.post("/users/login", async (req, res) => {
   try {
@@ -18,6 +75,43 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /superadmins/login:
+ *   post:
+ *     summary: Super Admin login
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "admin@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "SecurePassword123"
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *                 refreshToken:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *       400:
+ *         description: Invalid credentials
+ */
+
 router.post("/superadmins/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -30,6 +124,37 @@ router.post("/superadmins/login", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /admins/refresh-token:
+ *   post:
+ *     summary: Refresh token for Admin
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *       400:
+ *         description: Invalid refresh token
+ */
+
 router.post("/admins/refresh-token", async (req, res) => {
   try {
     const { refreshToken } = req.body;
@@ -41,6 +166,37 @@ router.post("/admins/refresh-token", async (req, res) => {
     res.status(400).json({ error: error.message });
   }  
 });
+
+/**
+ * @swagger
+ * /users/refresh-token:
+ *   post:
+ *     summary: Refresh token for User
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *       400:
+ *         description: Invalid refresh token
+ */
 
 router.post("/users/refresh-token", async (req,res) => {
   try {
