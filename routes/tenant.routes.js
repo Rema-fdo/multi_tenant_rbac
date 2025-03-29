@@ -84,4 +84,121 @@ router.post("/tenant",authenticate,authorize, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /tenant/{id}/access:
+ *   post:
+ *     summary: Assign or update access for an admin in a tenant
+ *     description: Grants admin access to a user within a specific tenant.
+ *     tags:
+ *       - Tenant Management
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the tenant to which the user access is being assigned.
+ *       - in: header
+ *         name: TenantId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the tenant making the request.
+ *       - in: body
+ *         name: body
+ *         required: true
+ *         description: User details for assigning access.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - user_id
+ *             - role
+ *           properties:
+ *             user_id:
+ *               type: integer
+ *               example: 5
+ *               description: ID of the user to assign access.
+ *             role:
+ *               type: string
+ *               enum: [admin]
+ *               example: "admin"
+ *               description: Role to be assigned to the user in the tenant.
+ *     responses:
+ *       200:
+ *         description: Successfully assigned access to the user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User 5 updated successfully in Tenant 3"
+ *       400:
+ *         description: Bad request due to missing or incorrect parameters.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid request parameters"
+ *       401:
+ *         description: Unauthorized request (Invalid or missing token).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized: No token provided"
+ *       403:
+ *         description: Forbidden - Insufficient permissions.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Forbidden: Insufficient permissions"
+ *       404:
+ *         description: Tenant or user not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found in this tenant"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Error managing access"
+ */
+
+router.post("/tenants/:id/access", authenticate, authorize, async (req, res) => {
+  try {
+      const { id: tenant_id } = req.params;  
+      const { user_id, role, permissions } = req.body; 
+      const response = await tenantServices.manageTenantAccess(tenant_id, user_id, role, permissions);
+
+      return res.status(200).json(response);
+  } catch (error) {
+      return res.status(500).json({ message: "Error managing access: " + error.message });
+  }
+});
+
 module.exports = router;

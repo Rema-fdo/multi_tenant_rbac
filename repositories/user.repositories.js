@@ -20,3 +20,7 @@ exports.getUserById = async (id) => {
         attributes: { exclude: ["password"] },
     });
 };
+
+exports.getUserByIdAndTenantID = async (user_id, tenant_id) => {
+    return await User.findOne({ where: { id: user_id, tenant_id } });
+}
