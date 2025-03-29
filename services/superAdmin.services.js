@@ -19,25 +19,25 @@ exports.login = async (email, password) => {
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) throw new Error('Invalid email or password');
 
-    const payload = {id: admin.id, email: admin.email}
+    const payload = {id: admin.id, email: admin.email, role: "super_admin"}
 
-    const accessToken = await authHelper.generateToken(process.env.ACCESS_TOKEN_SECRET, payload, "15m");
-    const refreshToken = await authHelper.generateToken(process.env.REFRESH_TOKEN_SECRET, payload, "7d");
+    const accessToken = await authHelper.generateToken(process.env.SECRET_KEY, payload, "15m");
+    const refreshToken = await authHelper.generateToken(process.env.SECRET_KEY, payload, "7d");
 
     return { accessToken, refreshToken };
 };
 
 exports.refreshToken = async(refreshToken) => {
     if (!refreshToken) throw new Error('Refresh Token required');
-    const decoded = await authHelper.decodeToken(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const decoded = await authHelper.decodeToken(refreshToken, process.env.SECRET_KEY);
     
     const { email } = decoded;
 
     const admin = await superAdminRepository.getAdminByEmail(email);
     if (!admin) throw new Error('Admin not found');
 
-    const payload = {id: admin.id, email: admin.email}
+    const payload = {id: admin.id, email: admin.email, role: "super_admin"}
 
-    const accessToken = await authHelper.generateToken(process.env.ACCESS_TOKEN_SECRET, payload, "15m");
+    const accessToken = await authHelper.generateToken(process.env.SECRET_KEY, payload, "15m");
     return {accessToken}
 }
