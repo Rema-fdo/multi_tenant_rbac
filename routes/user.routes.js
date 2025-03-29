@@ -1,6 +1,7 @@
 const express = require("express");
 const userServices = require("../services/user.services");
 const authenticate = require("../middleware/authentication.middleware");
+const authorize = require("../middleware/authorization.middleware");
 
 const router = express.Router();
 
@@ -80,7 +81,7 @@ const router = express.Router();
  *         description: Unauthorized (Invalid or missing token)
  */
 
-router.post("/user",authenticate, async (req, res) => {
+router.post("/user",authenticate,authorize, async (req, res) => {
     try {
         const { name, email, password, tenant_id, role } = req.body;
         const response = await userServices.createUser(name, email, password, tenant_id, role)
@@ -138,7 +139,7 @@ router.post("/user",authenticate, async (req, res) => {
  *         description: Server error
  */
 
-router.get("/users", authenticate, async (req, res) => {
+router.get("/users", authenticate, authorize, async (req, res) => {
     try {
         const { tenant_id } = req.query;
         const response = await userServices.getUsers(tenant_id)
@@ -188,7 +189,7 @@ router.get("/users", authenticate, async (req, res) => {
  *         description: Server error
  */
 
-router.get("/profile", authenticate, async (req, res) => {
+router.get("/profile", authenticate, authorize, async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await userServices.getUserById(userId);

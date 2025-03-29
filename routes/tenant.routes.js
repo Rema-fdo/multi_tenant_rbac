@@ -1,6 +1,8 @@
 const express = require("express");
 const tenantServices = require("../services/tenant.services");
 const authenticate = require("../middleware/authentication.middleware");
+const authorize = require("../middleware/authorization.middleware");
+
 
 const router = express.Router();
 
@@ -71,7 +73,7 @@ const router = express.Router();
  *         description: Server error
  */
 
-router.post("/tenant",authenticate, async (req, res) => {
+router.post("/tenant",authenticate,authorize, async (req, res) => {
   try {
     const { name } = req.body;
     const tenant = await tenantServices.createTenant(name)
