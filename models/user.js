@@ -44,6 +44,10 @@ User.init(
       allowNull: false,
       defaultValue: 'user',
     },
+    refreshToken: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
