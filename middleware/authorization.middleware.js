@@ -4,7 +4,7 @@ const rolePermissions = {
     "/profile:get": { "roles": ["user"] },
     "/profile/:id:get": { "roles": ["admin"] },
     "/tenant:post": { "roles": ["super_admin"] },
-    "/tenants/:id/access:post": { "roles": ["super_admin"] }
+    "/tenant/:id/access:post": { "roles": ["super_admin"] }
 };
   
 module.exports = (req, res, next) => {
