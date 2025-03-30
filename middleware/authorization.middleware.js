@@ -10,16 +10,13 @@ const rolePermissions = {
 module.exports = (req, res, next) => {
     try {
       const userRole = req.role; 
-      console.log(userRole)
       if (!userRole) {
         return res.status(403).json({ message: "Forbidden: No role assigned" });
       }
   
       const endpointKey = `${req.baseUrl}${req.route.path}:${req.method.toLowerCase()}`;
-      console.log(endpointKey)
   
       const allowedRoles = rolePermissions[endpointKey]?.roles || [];
-      console.log(allowedRoles)
       if (!allowedRoles.includes(userRole)) {
         return res.status(403).json({ message: "Forbidden: Insufficient permissions" });
       }
