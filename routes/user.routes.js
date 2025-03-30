@@ -40,6 +40,12 @@ const router = express.Router();
  *           type: string
  *         required: true
  *         description: "Bearer {token}"
+ *       - in: header
+ *         name: TenantId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: "Tenant Id for authorization"
  *     requestBody:
  *       required: true
  *       content:
@@ -107,6 +113,12 @@ router.post("/user",authenticate,authorize, async (req, res) => {
  *           type: string
  *         required: true
  *         description: "Bearer {token}"
+ *       - in: header
+ *         name: TenantId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: "Tenant Id for authorization"
  *       - in: query
  *         name: tenant_id
  *         schema:
@@ -165,6 +177,12 @@ router.get("/users", authenticate, authorize, async (req, res) => {
  *           type: string
  *         required: true
  *         description: "Bearer {token}"
+ *       - in: header
+ *         name: TenantId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: "Tenant Id for authorization"
  *     responses:
  *       200:
  *         description: User profile retrieved successfully
@@ -215,6 +233,12 @@ router.get("/profile", authenticate, authorize, async (req, res) => {
  *           type: string
  *         required: true
  *         description: "Bearer {token}"
+*       - in: header
+ *         name: TenantId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: "Tenant Id for authorization"
  *       - in: path
  *         name: id
  *         schema:
@@ -247,7 +271,7 @@ router.get("/profile", authenticate, authorize, async (req, res) => {
  *         description: Server error
  */
 
-router.get("/profile/:id", authenticate, async (req, res) => {
+router.get("/profile/:id", authenticate, authorize,async (req, res) => {
   try {
     const { id } = req.params;
     const user = await userServices.getUserById(id)

@@ -28,7 +28,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users/login:
+ * /auth/users/login:
  *   post:
  *     summary: User login
  *     tags: [Authentication]
@@ -77,7 +77,7 @@ router.post("/users/login", async (req, res) => {
 
 /**
  * @swagger
- * /superadmins/login:
+ * /auth/superadmins/login:
  *   post:
  *     summary: Super Admin login
  *     tags: [Authentication]
@@ -126,7 +126,7 @@ router.post("/superadmins/login", async (req, res) => {
 
 /**
  * @swagger
- * /admins/refresh-token:
+ * /auth/admins/refresh-token:
  *   post:
  *     summary: Refresh token for Admin
  *     tags: [Authentication]
@@ -169,7 +169,7 @@ router.post("/admins/refresh-token", async (req, res) => {
 
 /**
  * @swagger
- * /users/refresh-token:
+ * /auth/users/refresh-token:
  *   post:
  *     summary: Refresh token for User
  *     tags: [Authentication]

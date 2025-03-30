@@ -19,6 +19,8 @@ exports.login = async (email, password) => {
     const accessToken = await authHelper.generateToken(tenant.signing_secret, payload, "15m");
     const refreshToken = await authHelper.generateToken(tenant.signing_secret, payload, "7d");
 
+    const result = await userRepository.updateUserRefreshToken(user.id, refreshToken);
+
     return { accessToken, refreshToken };
 };
 
@@ -45,16 +47,25 @@ exports.getUserById = async (id) => {
 exports.refreshToken = async (token) => {
     if (!token) throw new Error("Unauthorized: No token provided");
     
-    const decodedPayload = jwt.decode(token);
-    if (!decodedPayload || !decodedPayload.tenant_id) throw new Error ("Invalid token");
+    try {
+        const user = await userRepository.findByRefreshToken(token);
+        if (!user) throw new Error("Invalid or expired refresh token");
 
-    const tenant = await tenantRepository.find(decodedPayload.tenant_id);
+        const tenant = await tenantRepository.find(user.tenant_id);
+        if (!tenant) throw new Error("Tenant not found");
 
-    const decodedToken = await authHelper.decodeToken(token, tenant.signing_secret);
+        const decodedToken = await authHelper.decodeToken(token, tenant.signing_secret);
+        if (!decodedToken) throw new Error("Invalid refresh token");
 
-    const payload = { id: decodedPayload.id, tenant_id: decodedPayload.tenant_id, role: decodedPayload.role };
+        const payload = { id: decodedToken.id, tenant_id: decodedToken.tenant_id, role: decodedToken.role };
 
-    const accessToken = await authHelper.generateToken(tenant.signing_secret, payload, "15m");
+        const accessToken = await authHelper.generateToken(tenant.signing_secret, payload, "15m");
+        const refreshToken = await authHelper.generateToken(tenant.signing_secret, payload, "7d");
 
-    return {accessToken}
+        await userRepository.updateUserRefreshToken(user.id, refreshToken);
+
+        return {accessToken, refreshToken}
+    } catch (error) {
+        throw new Error("Unauthorized: " + error.message);
+    }
 };
