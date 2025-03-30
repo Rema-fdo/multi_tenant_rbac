@@ -8,7 +8,6 @@ exports.manageTenantAccess = async(tenant_id, user_id, role) => {
     const tenant = await tenantRepository.find(tenant_id);
     if (!tenant) throw new Error("Tenant not found");
     const user = await userRepository.getUserByIdAndTenantID(user_id, tenant_id);
-    console.log("user:", user)
     if (!user) throw new Error("User not found in this tenant");
     if (role) {
         user.role = role;
