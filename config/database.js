@@ -16,7 +16,4 @@ sequelize
   .then(() => console.log("Database connected..."))
   .catch((err) => console.error("Error connecting to database:", err));
   
-  sequelize.sync({ force: false })
-  .then(() => console.log("Database synced..."))
-  .catch((err) => console.error("Error syncing database:", err));
 module.exports = sequelize;
