@@ -23,4 +23,12 @@ exports.getUserById = async (id) => {
 
 exports.getUserByIdAndTenantID = async (user_id, tenant_id) => {
     return await User.findOne({ where: { id: user_id, tenant_id } });
-}
+};
+
+exports.updateUserRefreshToken = async (userId, refreshToken) => {
+    return await User.update({ refreshToken }, { where: { id: userId } });
+};
+
+exports.findByRefreshToken = async (refreshToken) => {
+        return await User.findOne({ where: { refreshToken } });
+};

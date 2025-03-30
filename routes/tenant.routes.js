@@ -3,7 +3,6 @@ const tenantServices = require("../services/tenant.services");
 const authenticate = require("../middleware/authentication.middleware");
 const authorize = require("../middleware/authorization.middleware");
 
-
 const router = express.Router();
 
 /**
@@ -95,6 +94,12 @@ router.post("/tenant",authenticate,authorize, async (req, res) => {
  *     security:
  *       - BearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: "Bearer {token}"
  *       - in: path
  *         name: id
  *         required: true
@@ -103,29 +108,29 @@ router.post("/tenant",authenticate,authorize, async (req, res) => {
  *         description: ID of the tenant to which the user access is being assigned.
  *       - in: header
  *         name: TenantId
- *         required: true
+ *         required: false
  *         schema:
  *           type: integer
  *         description: ID of the tenant making the request.
- *       - in: body
- *         name: body
- *         required: true
- *         description: User details for assigning access.
- *         schema:
- *           type: object
- *           required:
- *             - user_id
- *             - role
- *           properties:
- *             user_id:
- *               type: integer
- *               example: 5
- *               description: ID of the user to assign access.
- *             role:
- *               type: string
- *               enum: [admin]
- *               example: "admin"
- *               description: Role to be assigned to the user in the tenant.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_id
+ *               - role
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 example: 5
+ *                 description: ID of the user to assign access.
+ *               role:
+ *                 type: string
+ *                 enum: [admin]
+ *                 example: "admin"
+ *                 description: Role to be assigned to the user in the tenant.
  *     responses:
  *       200:
  *         description: Successfully assigned access to the user.
@@ -189,15 +194,15 @@ router.post("/tenant",authenticate,authorize, async (req, res) => {
  *                   example: "Error managing access"
  */
 
-router.post("/tenants/:id/access", authenticate, authorize, async (req, res) => {
+router.post("/tenant/:id/access", authenticate, authorize, async (req, res) => {
   try {
-      const { id: tenant_id } = req.params;  
-      const { user_id, role, permissions } = req.body; 
-      const response = await tenantServices.manageTenantAccess(tenant_id, user_id, role, permissions);
+    const tenant_id = req.params.id;
+    const { user_id, role } = req.body;
+    const response = await tenantServices.manageTenantAccess(tenant_id, user_id, role);
 
-      return res.status(200).json(response);
+    return res.status(200).json(response);
   } catch (error) {
-      return res.status(500).json({ message: "Error managing access: " + error.message });
+    return res.status(500).json({ message: "Error managing access: " + error.message });
   }
 });
 
